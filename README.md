@@ -40,7 +40,7 @@ cargo uninstall sudoku_solver
 
 ## Usage
 
-1. Save a file containing the sudoku puzzle to be solved. Each square must be separated by at least one white space and blanks should be typed as zeros. Blank lines are ignored (should not contain any white space). Example (`sudoku.txt`):
+1. Save a file containing the sudoku puzzle to be solved. Each square must be separated by at least one white space and blanks should be typed as zeros. Blank lines are ignored (should not contain any white space). Example (`examples/possible.txt`):
 
 ```
 3 7 0  8 6 0  0 1 2
@@ -58,4 +58,6 @@ cargo uninstall sudoku_solver
 
 2. Redirect the file to the `sudoku_solver` command
 
-```sudoku_solver < sudoku.txt```
+```
+sudoku_solver < example/possible.txt
+```
