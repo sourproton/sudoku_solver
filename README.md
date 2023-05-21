@@ -2,11 +2,11 @@
 
 By Mateus Rodolfo.
 
-The goal of this project was to learn about [backtracking](https://en.wikipedia.org/wiki/Backtracking) and be able to feed a Rust program with a file via the standard input.
+The goal of this project was to learn about [backtracking](https://en.wikipedia.org/wiki/Backtracking) and to be able to feed a Rust program with a file via the standard input.
 
 ## Instalation
 
-You can install this program with [cargo](https://github.com/rust-lang/cargo).
+You can install this program with [cargo](https://github.com/rust-lang/cargo), which is available with [rustc](https://github.com/rust-lang/rust). I recommend [rustup](https://rustup.rs/) for managing your Rust installation.
 
 1. Clone the repository
 
