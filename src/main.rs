@@ -1,17 +1,31 @@
-use std::io::{stdin, BufRead};
+use std::{
+    io::{stdin, BufRead},
+    time::SystemTime,
+};
 
 fn main() {
     // Reading puzzle from `stdin`
     let mut sudoku = Sudoku::from_stdin();
 
     // Displaying input puzzle
-    println!("Puzzle:\n");
+    println!("\nPuzzle:\n");
     sudoku.show();
     println!();
+    println!();
+
+    let time = SystemTime::now();
+    let solved = sudoku.solve(0, 0);
+    let elapsed = time.elapsed().unwrap().as_nanos();
 
     // Displaying output
-    if sudoku.solve(0, 0) {
-        println!("Solution found:\n");
+    if solved {
+        if elapsed < 1_000 {
+            println!("Solution found in {} ns:\n", elapsed);
+        } else if elapsed < 1_000_000 {
+            println!("Solution found in {} µs:\n", elapsed / 1_000);
+        } else {
+            println!("Solution found in {} ms:\n", elapsed / 1_000_000);
+        }
         sudoku.show();
     } else {
         println!("No solution found");
