@@ -13,6 +13,7 @@ fn main() {
     println!();
     println!();
 
+    // Solving puzzle (modifies `sudoku`)
     let time = SystemTime::now();
     let solved = sudoku.solve(0, 0);
     let elapsed = time.elapsed().unwrap().as_nanos();
@@ -32,17 +33,12 @@ fn main() {
     }
 }
 
-/// Holds the `Sudoku` `grid` and its methods
+/// Holds the `Sudoku`'s `grid` and its methods
 struct Sudoku {
     grid: Vec<Vec<u8>>,
 }
 
 impl Sudoku {
-    /// Builds a `Sudoku` from a vector of vectors
-    fn new(grid: Vec<Vec<u8>>) -> Self {
-        Sudoku { grid }
-    }
-
     /// Builds a `Sudoku` from stdin
     fn from_stdin() -> Self {
         // Creating empty grid to populate with parsed input
@@ -62,7 +58,7 @@ impl Sudoku {
             }
         });
 
-        Sudoku::new(grid)
+        Sudoku { grid }
     }
 
     /// Checks if `n` is possible at position `[row][col]`
@@ -192,34 +188,38 @@ mod tests {
 
     #[test]
     fn test_possible() {
-        let my_sudoku = Sudoku::new(vec![
-            vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
-            vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
-            vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
-            vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
-            vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
-            vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
-            vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
-            vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
-            vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
-        ]);
+        let my_sudoku = Sudoku {
+            grid: vec![
+                vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
+                vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
+                vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
+                vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
+                vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
+                vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
+                vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
+            ],
+        };
 
         assert!(my_sudoku.is_possible(0, 2, 9));
     }
 
     #[test]
     fn test_solve() {
-        let mut my_sudoku = Sudoku::new(vec![
-            vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
-            vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
-            vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
-            vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
-            vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
-            vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
-            vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
-            vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
-            vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
-        ]);
+        let mut my_sudoku = Sudoku {
+            grid: vec![
+                vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
+                vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
+                vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
+                vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
+                vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
+                vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
+                vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
+                vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
+                vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
+            ],
+        };
 
         assert!(my_sudoku.solve(0, 0));
     }
