@@ -38,47 +38,62 @@ cargo uninstall sudoku_solver
 
 ## Usage
 
-1. Save a file containing the sudoku puzzle to be solved. Each square must be separated by at least one white space and blanks should be typed as zeros. Blank lines are ignored (should not contain any white space). Example (`examples/possible.txt`):
+1. Save a file containing the sudoku puzzle to be solved. Spaces and new lines are ignored. Blanks must be entered as dots.
+
+Example of formatted input (`examples/possible_formatted.txt`):
 
 ```
-3 7 0  8 6 0  0 1 2
-6 0 0  9 0 0  8 0 7
-0 0 0  0 0 0  0 0 3
+3 7 .  8 6 .  . 1 2
+6 . .  9 . .  8 . 7
+. . .  . . .  . . 3
 
-0 8 3  7 2 0  4 5 0
-5 4 0  0 0 6  1 0 0
-2 6 0  0 0 0  0 0 0
+. 8 3  7 2 .  4 5 .
+5 4 .  . . 6  1 . .
+2 6 .  . . .  . . .
 
-0 0 0  2 0 9  0 8 0
-1 0 0  0 8 0  0 0 5
-8 2 6  5 4 0  3 9 0
+. . .  2 . 9  . 8 .
+1 . .  . 8 .  . . 5
+8 2 6  5 4 .  3 9 .
 ```
 
-2. Redirect the file to the `sudoku_solver` command
+Example of unformatted input (`examples/possible_unformatted.txt`):
 
 ```
-sudoku_solver < example/possible.txt
+..3..6....5.1.....6...234...7.....5....9....7.64.3.8...4.....91..2..83...........
+```
+
+Both forms are valid
+
+2. Redirect the input to the `sudoku_solver` command
+
+```
+sudoku_solver < example/possible_formatted.txt
+```
+
+Note: another option is to write the puzzle directly into the terminal, without saving the input file, like that:
+
+```
+sudoku_solver <<< ..3..6....5.1.....6...234...7.....5....9....7.64.3.8...4.....91..2..83...........
 ```
 
 3. The output is printed to the terminal
 
 ```
-Puzzle:
+Input:
 
-3 7 0  8 6 0  0 1 2
-6 0 0  9 0 0  8 0 7
-0 0 0  0 0 0  0 0 3
+3 7 .  8 6 .  . 1 2
+6 . .  9 . .  8 . 7
+. . .  . . .  . . 3
 
-0 8 3  7 2 0  4 5 0
-5 4 0  0 0 6  1 0 0
-2 6 0  0 0 0  0 0 0
+. 8 3  7 2 .  4 5 .
+5 4 .  . . 6  1 . .
+2 6 .  . . .  . . .
 
-0 0 0  2 0 9  0 8 0
-1 0 0  0 8 0  0 0 5
-8 2 6  5 4 0  3 9 0
+. . .  2 . 9  . 8 .
+1 . .  . 8 .  . . 5
+8 2 6  5 4 .  3 9 .
 
-
-Solution found in 39 µs:
+Solution found in 19 µs:
 
 3 7 9  8 6 4  5 1 2
 6 1 2  9 3 5  8 4 7

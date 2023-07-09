@@ -1,5 +1,5 @@
 use std::{
-    io::{stdin, BufRead},
+    io::{stdin, Read},
     time::SystemTime,
 };
 
@@ -8,9 +8,8 @@ fn main() {
     let mut sudoku = Sudoku::from_stdin();
 
     // Displaying input puzzle
-    println!("\nPuzzle:\n");
+    println!("\nInput:\n");
     sudoku.show();
-    println!();
     println!();
 
     // Solving puzzle (modifies `sudoku`)
@@ -41,22 +40,27 @@ struct Sudoku {
 impl Sudoku {
     /// Builds a `Sudoku` from stdin
     fn from_stdin() -> Self {
-        // Creating empty grid to populate with parsed input
-        let mut grid: Vec<Vec<u8>> = vec![];
+        // Creating 9x9 grid of zeros to populate with parsed input
+        let mut grid: Vec<Vec<u8>> = vec![vec![0; 9]; 9];
 
         // getting input from `stdin` and parsing it to `Vec`s of `u8`
         // ignores whitespace and empty lines (allows user to format input)
-        stdin().lock().lines().for_each(|line| {
-            let l = line.as_ref().expect("error reading input");
-            if !l.is_empty() {
-                grid.push(
-                    line.expect("error reading input")
-                        .split_whitespace()
-                        .map(|i| i.parse().expect("error parsing input"))
-                        .collect(),
-                )
-            }
-        });
+        let mut input = String::new();
+
+        stdin()
+            .lock()
+            .read_to_string(&mut input)
+            .expect("Couldn't read input");
+
+        input
+            .chars()
+            .filter(|c| *c != ' ' && *c != '\n')
+            .enumerate()
+            .for_each(|(i, c)| {
+                if c != '.' {
+                    grid[i / 9][i % 9] = c.to_digit(10).expect("invalid digit in input") as u8;
+                }
+            });
 
         Sudoku { grid }
     }
@@ -135,50 +139,33 @@ impl Sudoku {
 
     /// Prints the solved sudoku to the `stdout`
     fn show(&self) {
-        for row in 0..=2 {
-            println!(
-                "{} {} {}  {} {} {}  {} {} {}",
-                self.grid[row][0],
-                self.grid[row][1],
-                self.grid[row][2],
-                self.grid[row][3],
-                self.grid[row][4],
-                self.grid[row][5],
-                self.grid[row][6],
-                self.grid[row][7],
-                self.grid[row][8]
-            );
-        }
-        println!();
-        for row in 3..=5 {
-            println!(
-                "{} {} {}  {} {} {}  {} {} {}",
-                self.grid[row][0],
-                self.grid[row][1],
-                self.grid[row][2],
-                self.grid[row][3],
-                self.grid[row][4],
-                self.grid[row][5],
-                self.grid[row][6],
-                self.grid[row][7],
-                self.grid[row][8]
-            );
-        }
-        println!();
-        for row in 6..=8 {
-            println!(
-                "{} {} {}  {} {} {}  {} {} {}",
-                self.grid[row][0],
-                self.grid[row][1],
-                self.grid[row][2],
-                self.grid[row][3],
-                self.grid[row][4],
-                self.grid[row][5],
-                self.grid[row][6],
-                self.grid[row][7],
-                self.grid[row][8]
-            );
-        }
+        self.grid.iter().flatten().enumerate().for_each(|(i, n)| {
+            // spacing
+            if i % 9 != 0 {
+                print!(" ");
+            }
+            // element
+            if *n == 0 {
+                print!(".");
+            } else {
+                print!("{n}");
+            }
+
+            // col separator
+            if i % 9 == 2 || i % 9 == 5 {
+                print!(" ");
+            }
+
+            // change line
+            if (i + 1) % 9 == 0 {
+                println!();
+
+                // line separator
+                if i / 9 == 2 || i / 9 == 5 {
+                    println!();
+                }
+            }
+        })
     }
 }
 
