@@ -1,6 +1,6 @@
 # Sudoku solver
 
-The goal of this project was to learn about [backtracking](https://en.wikipedia.org/wiki/Backtracking) and to be able to feed a Rust program with a file via the standard input.
+The goal of this project was to learn about [backtracking](https://en.wikipedia.org/wiki/Backtracking), the [wave function collapse](https://en.wikipedia.org/wiki/Wave_function_collapse#Use_in_procedural_generation) and to be able to feed a Rust program with a file via the standard input.
 
 ## Instalation
 

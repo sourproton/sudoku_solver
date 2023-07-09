@@ -34,14 +34,14 @@ fn main() {
 
 /// Holds the `Sudoku`'s `grid` and its methods
 struct Sudoku {
-    grid: Vec<Vec<u8>>,
+    grid: [u8; 81],
 }
 
 impl Sudoku {
     /// Builds a `Sudoku` from stdin
     fn from_stdin() -> Self {
         // Creating 9x9 grid of zeros to populate with parsed input
-        let mut grid: Vec<Vec<u8>> = vec![vec![0; 9]; 9];
+        let mut grid = [0; 81];
 
         // getting input from `stdin` and parsing it to `Vec`s of `u8`
         // ignores whitespace and empty lines (allows user to format input)
@@ -58,7 +58,7 @@ impl Sudoku {
             .enumerate()
             .for_each(|(i, c)| {
                 if c != '.' {
-                    grid[i / 9][i % 9] = c.to_digit(10).expect("invalid digit in input") as u8;
+                    grid[i] = c.to_digit(10).expect("invalid digit in input") as u8;
                 }
             });
 
@@ -68,15 +68,15 @@ impl Sudoku {
     /// Checks if `n` is possible at position `[row][col]`
     fn is_possible(&self, row: usize, col: usize, n: u8) -> bool {
         // check row
-        for i in 0..=8 {
-            if self.grid[row][i] == n {
+        for col in 0..=8 {
+            if self.grid[row * 9 + col] == n {
                 return false;
             }
         }
 
         // check column
-        for i in 0..=8 {
-            if self.grid[i][col] == n {
+        for row in 0..=8 {
+            if self.grid[row * 9 + col] == n {
                 return false;
             }
         }
@@ -84,9 +84,9 @@ impl Sudoku {
         // check subgrid
         let r0 = (row / 3) * 3;
         let c0 = (col / 3) * 3;
-        for r in r0..=r0 + 2 {
-            for c in c0..=c0 + 2 {
-                if self.grid[r][c] == n {
+        for row in r0..=r0 + 2 {
+            for col in c0..=c0 + 2 {
+                if self.grid[row * 9 + col] == n {
                     return false;
                 }
             }
@@ -115,14 +115,14 @@ impl Sudoku {
         }
 
         // skip if this square already has a value
-        if self.grid[row][col] != 0 {
+        if self.grid[row * 9 + col] != 0 {
             return self.solve(next_row, next_col);
         }
 
         // try all possible combinations for this square
         for n in 1..=9 {
             if self.is_possible(row, col, n) {
-                self.grid[row][col] = n;
+                self.grid[row * 9 + col] = n;
 
                 if self.solve(next_row, next_col) {
                     return true;
@@ -130,7 +130,7 @@ impl Sudoku {
             }
 
             // back tracking
-            self.grid[row][col] = 0;
+            self.grid[row * 9 + col] = 0;
         }
 
         // unsolvable
@@ -139,7 +139,7 @@ impl Sudoku {
 
     /// Prints the solved sudoku to the `stdout`
     fn show(&self) {
-        self.grid.iter().flatten().enumerate().for_each(|(i, n)| {
+        self.grid.iter().enumerate().for_each(|(i, n)| {
             // spacing
             if i % 9 != 0 {
                 print!(" ");
@@ -176,16 +176,10 @@ mod tests {
     #[test]
     fn test_possible() {
         let my_sudoku = Sudoku {
-            grid: vec![
-                vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
-                vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
-                vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
-                vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
-                vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
-                vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
-                vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
+            grid: [
+                3, 7, 0, 8, 6, 0, 0, 1, 2, 6, 0, 0, 9, 0, 0, 8, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
+                8, 3, 7, 2, 0, 4, 5, 0, 5, 4, 0, 0, 0, 6, 1, 0, 0, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 2, 0, 9, 0, 8, 0, 1, 0, 0, 0, 8, 0, 0, 0, 5, 8, 2, 6, 5, 4, 0, 3, 9, 0,
             ],
         };
 
@@ -195,16 +189,10 @@ mod tests {
     #[test]
     fn test_solve() {
         let mut my_sudoku = Sudoku {
-            grid: vec![
-                vec![3, 7, 0, 8, 6, 0, 0, 1, 2],
-                vec![6, 0, 0, 9, 0, 0, 8, 0, 7],
-                vec![0, 0, 0, 0, 0, 0, 0, 0, 3],
-                vec![0, 8, 3, 7, 2, 0, 4, 5, 0],
-                vec![5, 4, 0, 0, 0, 6, 1, 0, 0],
-                vec![2, 6, 0, 0, 0, 0, 0, 0, 0],
-                vec![0, 0, 0, 2, 0, 9, 0, 8, 0],
-                vec![1, 0, 0, 0, 8, 0, 0, 0, 5],
-                vec![8, 2, 6, 5, 4, 0, 3, 9, 0],
+            grid: [
+                3, 7, 0, 8, 6, 0, 0, 1, 2, 6, 0, 0, 9, 0, 0, 8, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
+                8, 3, 7, 2, 0, 4, 5, 0, 5, 4, 0, 0, 0, 6, 1, 0, 0, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 2, 0, 9, 0, 8, 0, 1, 0, 0, 0, 8, 0, 0, 0, 5, 8, 2, 6, 5, 4, 0, 3, 9, 0,
             ],
         };
 
