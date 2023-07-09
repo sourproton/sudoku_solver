@@ -32,7 +32,7 @@ fn main() {
     }
 }
 
-/// Holds the `Sudoku`'s `grid` and its methods
+/// Holds the `Sudoku`'s `values`, the `possible_values` for each non-collapsed cell, and its methods
 struct Sudoku {
     values: Vec<u8>,
     possible_values: Vec<Vec<u8>>,
@@ -50,7 +50,7 @@ impl Sudoku {
             .read_to_string(&mut input)
             .expect("Couldn't read input");
 
-        // Creating 9x9 grid of zeros to populate with parsed input
+        // Creating vec of zeros to populate with parsed input
         let mut values = vec![0; 81];
 
         input
@@ -68,11 +68,13 @@ impl Sudoku {
 
     /// Builds a `Sudoku` from a vector of values
     fn from_values(values: Vec<u8>) -> Self {
+        // default sudoku with all zeros and every superposition
         let mut sudoku = Sudoku {
             values: vec![0; 81],
             possible_values: vec![vec![1, 2, 3, 4, 5, 6, 7, 8, 9]; 81],
         };
 
+        // read input and collapse for each value
         values
             .iter()
             .enumerate()
@@ -120,6 +122,7 @@ impl Sudoku {
         let c1 = c0 + 2;
 
         // backtracking
+        // set value back to 0 and push the old value back to the cells where it's possible
         if value == 0 {
             let old_value = self.values[index];
             self.values[index] = value;
@@ -158,6 +161,7 @@ impl Sudoku {
             }
         }
         // propagating
+        // set cell to value and remove value from possibility of other cells in row, col and box
         else {
             self.values[index] = value;
 
