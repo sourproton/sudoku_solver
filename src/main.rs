@@ -91,6 +91,8 @@ impl Sudoku {
     fn solve(&mut self) -> bool {
         if let Some(index) = self.lowest_entropy() {
             // try all possible combinations for this square
+            // for value in 1..=9 {
+            //     if self.is_possible(index, value) {
             for value in self.possible_values[index].clone() {
                 self.collapse(index, value);
 
@@ -100,6 +102,7 @@ impl Sudoku {
 
                 // back tracking
                 self.collapse(index, 0);
+                // }
             }
 
             // unsolvable
@@ -131,32 +134,32 @@ impl Sudoku {
             for row in r0..=r1 {
                 for col in c0..=c1 {
                     if self.is_possible(row * 9 + col, old_value) {
-                        self.possible_values[row * 9 + col].push(self.values[index]);
+                        self.possible_values[row * 9 + col].push(old_value);
                     }
                 }
             }
 
             // row
-            for col in 0..r0 {
+            for col in 0..c0 {
                 if self.is_possible(row * 9 + col, old_value) {
-                    self.possible_values[row * 9 + col].push(self.values[index]);
+                    self.possible_values[row * 9 + col].push(old_value);
                 }
             }
-            for col in r1 + 1..9 {
+            for col in c1 + 1..9 {
                 if self.is_possible(row * 9 + col, old_value) {
-                    self.possible_values[row * 9 + col].push(self.values[index]);
+                    self.possible_values[row * 9 + col].push(old_value);
                 }
             }
 
             // column
-            for row in 0..c0 {
+            for row in 0..r0 {
                 if self.is_possible(row * 9 + col, old_value) {
-                    self.possible_values[row * 9 + col].push(self.values[index]);
+                    self.possible_values[row * 9 + col].push(old_value);
                 }
             }
-            for row in c1 + 1..9 {
+            for row in r1 + 1..9 {
                 if self.is_possible(row * 9 + col, old_value) {
-                    self.possible_values[row * 9 + col].push(self.values[index]);
+                    self.possible_values[row * 9 + col].push(old_value);
                 }
             }
         }
@@ -178,7 +181,7 @@ impl Sudoku {
             }
 
             // row
-            for col in 0..r0 {
+            for col in 0..c0 {
                 if let Some(pos) = self.possible_values[row * 9 + col]
                     .iter()
                     .position(|v| *v == value)
@@ -186,7 +189,7 @@ impl Sudoku {
                     self.possible_values[row * 9 + col].swap_remove(pos);
                 }
             }
-            for col in r1 + 1..9 {
+            for col in c1 + 1..9 {
                 if let Some(pos) = self.possible_values[row * 9 + col]
                     .iter()
                     .position(|v| *v == value)
@@ -196,7 +199,7 @@ impl Sudoku {
             }
 
             // column
-            for row in 0..c0 {
+            for row in 0..r0 {
                 if let Some(pos) = self.possible_values[row * 9 + col]
                     .iter()
                     .position(|v| *v == value)
@@ -204,7 +207,7 @@ impl Sudoku {
                     self.possible_values[row * 9 + col].swap_remove(pos);
                 }
             }
-            for row in c1 + 1..9 {
+            for row in r1 + 1..9 {
                 if let Some(pos) = self.possible_values[row * 9 + col]
                     .iter()
                     .position(|v| *v == value)
@@ -222,39 +225,37 @@ impl Sudoku {
 
         // box limits
         let r0 = (row / 3) * 3;
-        let r1 = r0 + 2;
         let c0 = (col / 3) * 3;
-        let c1 = c0 + 2;
 
         // box
-        for row in r0..=r1 {
-            for col in c0..=c1 {
-                if self.values[row * 9 + col] == value {
+        for r in r0..=r0 + 2 {
+            for c in c0..=c0 + 2 {
+                if self.values[r * 9 + c] == value {
                     return false;
                 }
             }
         }
 
         // row
-        for col in 0..r0 {
-            if self.values[row * 9 + col] == value {
+        for c in 0..c0 {
+            if self.values[row * 9 + c] == value {
                 return false;
             }
         }
-        for col in r1 + 1..9 {
-            if self.values[row * 9 + col] == value {
+        for c in c0 + 3..9 {
+            if self.values[row * 9 + c] == value {
                 return false;
             }
         }
 
         // column
-        for row in 0..c0 {
-            if self.values[row * 9 + col] == value {
+        for r in 0..r0 {
+            if self.values[r * 9 + col] == value {
                 return false;
             }
         }
-        for row in c1 + 1..9 {
-            if self.values[row * 9 + col] == value {
+        for r in r0 + 3..9 {
+            if self.values[r * 9 + col] == value {
                 return false;
             }
         }
@@ -308,21 +309,23 @@ impl Sudoku {
             }
         })
     }
-
-    // /// Prints the sudoku possible values to the `stdout`
-    // fn show_possible_values(&self) {
-    //     self.possible_values.iter().enumerate().for_each(|(i, v)| {
-    //         println!("{i}: {v:?}");
-    //     })
-    // }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::*;
 
+    impl Sudoku {
+        /// Prints the sudoku possible values to the `stdout`
+        fn show_possible_values(&self) {
+            self.possible_values.iter().enumerate().for_each(|(i, v)| {
+                println!("{i}: {v:?}");
+            })
+        }
+    }
+
     #[test]
-    fn test_solve() {
+    fn test_solve_full() {
         let values = vec![
             3, 7, 0, 8, 6, 0, 0, 1, 2, 6, 0, 0, 9, 0, 0, 8, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 8,
             3, 7, 2, 0, 4, 5, 0, 5, 4, 0, 0, 0, 6, 1, 0, 0, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
@@ -332,5 +335,33 @@ mod tests {
         let mut sudoku = Sudoku::from_values(values);
 
         assert!(sudoku.solve());
+
+        sudoku.show_values();
+    }
+
+    #[test]
+    fn test_solve_impossible() {
+        let values = vec![
+            0, 0, 3, 0, 0, 6, 0, 0, 0, 0, 5, 0, 1, 0, 0, 0, 0, 0, 6, 0, 0, 0, 2, 3, 4, 0, 0, 0, 7,
+            0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 9, 0, 0, 0, 0, 7, 0, 6, 4, 0, 3, 0, 8, 0, 0, 0, 4, 0, 0,
+            0, 0, 0, 9, 1, 0, 0, 2, 0, 0, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ];
+
+        let mut sudoku = Sudoku::from_values(values);
+
+        assert!(!sudoku.solve());
+
+        sudoku.show_values();
+    }
+
+    #[test]
+    fn test_solve_empty() {
+        let values = vec![0; 81];
+
+        let mut sudoku = Sudoku::from_values(values);
+
+        assert!(sudoku.solve());
+
+        sudoku.show_values();
     }
 }
